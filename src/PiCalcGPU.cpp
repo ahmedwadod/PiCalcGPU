@@ -1,7 +1,4 @@
-#include <iostream>
-
-#define CL_HPP_TARGET_OPENCL_VERSION 200
-#include <opencl.hpp>
+#include <PiCalcGPU.hpp>
 
 int main()
 {
@@ -32,4 +29,22 @@ int main()
     auto device = devices.front();
 
     return 0;
+}
+
+size_t wi_size(const cl::Device &d)
+{
+    auto wi_sizes = d.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
+    size_t max_size_in_first_dim = wi_sizes[0];
+    if ((N / max_size_in_first_dim) % 2 == 0)
+    {
+        return max_size_in_first_dim;
+    }
+    else if ((N / (max_size_in_first_dim / 2)) % 2 == 0)
+    {
+        return (max_size_in_first_dim / 2);
+    }
+    else
+    {
+        return (max_size_in_first_dim / 2 + 1);
+    }
 }
