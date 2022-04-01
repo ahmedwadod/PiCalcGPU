@@ -28,10 +28,18 @@ int main()
     // Get the first device
     auto device = devices.front();
 
+    // Get the Work Item size (LENGTH)
+    const int LENGTH = wiSize(device);
+
+    // Allocate memory and generate the data
+    unsigned long long *input_data = (unsigned long long *)malloc(sizeof(unsigned long long) * LENGTH);
+    double *output_data = (double *)malloc(sizeof(double) * LENGTH);
+    writeStartingPoints(input_data, LENGTH);
+
     return 0;
 }
 
-size_t wi_size(const cl::Device &d)
+size_t wiSize(const cl::Device &d)
 {
     auto wi_sizes = d.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
     size_t max_size_in_first_dim = wi_sizes[0];
@@ -46,5 +54,14 @@ size_t wi_size(const cl::Device &d)
     else
     {
         return (max_size_in_first_dim / 2 + 1);
+    }
+}
+
+void writeStartingPoints(unsigned long long *mem, size_t length)
+{
+    auto iterations_per_wi = N / length;
+    for (size_t i = 0; i < length; i++)
+    {
+        mem[i] = i * iterations_per_wi;
     }
 }
