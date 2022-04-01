@@ -29,17 +29,18 @@ int main()
     auto device = devices.front();
     cl::Context context(device);
     cl::CommandQueue queue(context, device);
+    queue.flush();
 
     // Get the Work Item size (LENGTH)
     const int LENGTH = wiSize(device);
 
     // Allocate memory and generate the data
     auto size_input = sizeof(unsigned long) * LENGTH;
-    // unsigned long *input_data = (unsigned long *)malloc(size_input);
     unsigned long input_data[LENGTH];
     auto size_output = sizeof(double) * LENGTH;
-    // double *output_data = (double *)malloc(size_output);
     double output_data[LENGTH];
+    unsigned long *iter_per_wi = (unsigned long *)malloc(sizeof(unsigned long));
+    *iter_per_wi = N / LENGTH;
     writeStartingPoints(input_data, LENGTH);
 
     // Load the program, build and make the kernel
@@ -58,13 +59,16 @@ int main()
     // Create the buffers
     cl::Buffer input_buffer(context, CL_MEM_READ_WRITE, size_input);
     cl::Buffer output_buffer(context, CL_MEM_READ_WRITE, size_output);
+    cl::Buffer iter_buffer(context, CL_MEM_READ_WRITE, sizeof(unsigned long));
 
     // Enqueue writing
     queue.enqueueWriteBuffer(input_buffer, CL_FALSE, 0, size_input, input_data);
+    queue.enqueueWriteBuffer(iter_buffer, CL_FALSE, 0, sizeof(unsigned long), iter_per_wi);
 
     // Set kernel arguments
     kernel.setArg(0, sizeof(input_buffer), &input_buffer);
     kernel.setArg(1, sizeof(output_buffer), &output_buffer);
+    kernel.setArg(2, sizeof(iter_buffer), &iter_buffer);
 
     // Execute the kernel
     cl::NDRange dims(LENGTH);
