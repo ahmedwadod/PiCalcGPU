@@ -36,6 +36,9 @@ int main()
     double *output_data = (double *)malloc(sizeof(double) * LENGTH);
     writeStartingPoints(input_data, LENGTH);
 
+    // Load the program
+    auto program = getProgram(N / LENGTH);
+
     return 0;
 }
 
@@ -64,4 +67,27 @@ void writeStartingPoints(unsigned long long *mem, size_t length)
     {
         mem[i] = i * iterations_per_wi;
     }
+}
+
+bool _replace(cl::string &str, const cl::string &from, const cl::string &to)
+{
+    size_t start_pos = str.find(from);
+    if (start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
+
+cl::Program getProgram(unsigned long long diff)
+{
+    std::ifstream input_file("./calcPi.cl");
+    if (!input_file.is_open())
+    {
+        std::cerr << "Could not open the file - 'calcPi.cl'" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    cl::string src((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+
+    _replace(src, "{N / CORES}", std::to_string(diff));
+    return cl::Program(src);
 }

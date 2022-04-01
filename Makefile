@@ -1,5 +1,5 @@
 run: build
-	@./bin/pi
+	@cd bin && ./pi
 	
 build:
 	@cp -f src/calcPi.cl bin/calcPi.cl

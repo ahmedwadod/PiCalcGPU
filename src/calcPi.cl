@@ -1,4 +1,4 @@
-__kernel void calcPi(__global unsigned long long *startingPoints, __global double *outputData)
+__kernel void calcPi(global unsigned long long *startingPoints, global double *outputData)
 {
     int id = get_global_id(0);
     unsigned long long c = (unsigned long long *)startingPoints[id];
@@ -6,7 +6,8 @@ __kernel void calcPi(__global unsigned long long *startingPoints, __global doubl
     double denominator = 1.0 + (c * 2.0);
     double operation = (c % 2 == 1) ? -1.0 : 1.0;
     double pi = 0.0;
-    unsigned long long dif = N / CORES;
+    // should be replaced when reading the file
+    unsigned long long dif = {N / CORES};
     for (unsigned long long i = 0; i < dif; i++)
     {
         pi += operation * (numerator / denominator);

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #define CL_HPP_TARGET_OPENCL_VERSION 200
 #include <opencl.hpp>
@@ -18,7 +20,6 @@ size_t wiSize(const cl::Device &d);
 void writeStartingPoints(unsigned long long *mem, size_t length);
 
 // Get the OpenCL C program from source
-cl::Program
-get_program();
+cl::Program getProgram(unsigned long long diff);
 
 #endif
