@@ -21,6 +21,6 @@ size_t wiSize(const cl::Device &d);
 void writeStartingPoints(unsigned long *mem, size_t length);
 
 // Get the OpenCL C program from source
-cl::string loadProgramSource(unsigned long diff);
+cl::string loadProgramSource();
 
 #endif

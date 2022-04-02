@@ -44,7 +44,7 @@ int main()
     writeStartingPoints(input_data, LENGTH);
 
     // Load the program, build and make the kernel
-    auto src = loadProgramSource(N / LENGTH);
+    auto src = loadProgramSource();
     cl::Program program(context, src);
     auto err = program.build();
     if (err != 0)
@@ -118,16 +118,7 @@ void writeStartingPoints(unsigned long *mem, size_t length)
     }
 }
 
-bool _replace(cl::string &str, const cl::string &from, const cl::string &to)
-{
-    size_t start_pos = str.find(from);
-    if (start_pos == std::string::npos)
-        return false;
-    str.replace(start_pos, from.length(), to);
-    return true;
-}
-
-cl::string loadProgramSource(unsigned long diff)
+cl::string loadProgramSource()
 {
     std::ifstream input_file("./calcPi.cl");
     if (!input_file.is_open())
@@ -136,7 +127,5 @@ cl::string loadProgramSource(unsigned long diff)
         exit(EXIT_FAILURE);
     }
     cl::string src((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
-    _replace(src, "{N / CORES}", std::to_string(diff));
-
     return src;
 }
